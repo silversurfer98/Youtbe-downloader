@@ -11,7 +11,8 @@ def format_selector(ctx):
 
     # acodec='none' means there is no audio
     best_video = next(f for f in formats
-                      if f['vcodec'] != 'none' and f['acodec'] == 'none' and f['resolution'] == '1920x1080' and f['ext'] == 'mp4')
+                      if (f['vcodec'] != 'none' and f['acodec'] == 'none' and f['resolution'] == '1920x1080' and f['ext'] == 'mp4') or f['vcodec'] != 'none' and f['acodec'] == 'none' and f['resolution'] == '1280x720' and f['ext'] == 'mp4')
+                        
     
     # find compatible audio extension
     audio_ext = {'mp4': 'm4a', 'webm': 'webm'}[best_video['ext']]
