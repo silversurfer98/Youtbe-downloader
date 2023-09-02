@@ -10,9 +10,15 @@ def format_selector(ctx):
     formats = ctx.get('formats')[::-1]
 
     # acodec='none' means there is no audio
-    best_video = next(f for f in formats
-                      if (f['vcodec'] != 'none' and f['acodec'] == 'none' and f['resolution'] == '1920x1080' and f['ext'] == 'mp4') or f['vcodec'] != 'none' and f['acodec'] == 'none' and f['ext'] == 'mp4')
-                        
+    try:
+        best_video = next(f for f in formats
+                        if (f['vcodec'] != 'none' and f['acodec'] == 'none' and f['resolution'] == '1920x1080'))
+    except:
+        print("cannot find 1080p\n")
+        best_video = next(f for f in formats
+                        if (f['vcodec'] != 'none' and f['acodec'] == 'none'))
+
+
     
     # find compatible audio extension
     audio_ext = {'mp4': 'm4a', 'webm': 'webm'}[best_video['ext']]
@@ -53,10 +59,14 @@ def my_hook(d):
         print(d['filename']," done, post processing in progress .......")
 
 
+def custom_prepare_outtmpl(self, outtmpl, info_dict, sanitize=False):
+    outtmpl = "%(playlist_index)s - %(title)s.%(ext)s"
+    #outtmpl = '%(playlist_index|)s%(playlist_index& - |)s%(title)s.%(ext)s'
+
 ydl_opts = {
     'format': format_selector,
-    #'logger': MyLogger(),
-    #'progress_hooks': [my_hook],
+    'logger': MyLogger(),
+    'progress_hooks': [my_hook],
     #'prepare_outtmpl': custom_prepare_outtmpl,
     'restrictfilenames': False,
     #'subtitleslangs': "en",
@@ -68,6 +78,7 @@ ydl_opts = {
     'writeinfojson': False,
     'windowsfilenames': True,
     'outtmpl' : "%(playlist_index|)s%(playlist_index& - |)s%(title)s.%(ext)s",
+    # 'playlist_items' : "37:58",
 }
 
 def main(argv):
