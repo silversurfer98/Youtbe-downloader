@@ -88,12 +88,14 @@ def main(argv):
     # print ('Number of arguments:', len(argv), 'arguments.')
     # print ('Argument List:', str(argv))
     global resolution
-    if(argv[1]=="4k"):
-        resolution = "3840x2160"
-    elif(argv[1]=="2k"):
-        resolution = "2560x1440"
-    with ytd(ydl_opts) as ydl:
-        ydl.download(argv[0])
+    try:
+        if(argv[1]=="4k"):
+            resolution = "3840x2160"
+        elif(argv[1]=="2k"):
+            resolution = "2560x1440"
+    except:
+        with ytd(ydl_opts) as ydl:
+            ydl.download(argv[0])
 
 if __name__ == "__main__":
    main(sys.argv[1:])
