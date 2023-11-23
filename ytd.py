@@ -1,20 +1,23 @@
 from yt_dlp import YoutubeDL as ytd
 import sys
 URL = []
+resolution = "1920x1080"
 
 def format_selector(ctx):
     """ Select the best video and the best audio that won't result in an mkv.
     NOTE: This is just an example and does not handle all cases """
-
+    global resolution
     # formats are already sorted worst to best
     formats = ctx.get('formats')[::-1]
 
     # acodec='none' means there is no audio
     try:
+        print(resolution)
         best_video = next(f for f in formats
-                        if (f['vcodec'] != 'none' and f['acodec'] == 'none' and f['resolution'] == '1920x1080'))
+                        # if (f['vcodec'] != 'none' and f['acodec'] == 'none' and f['resolution'] == '1920x1080'))
+                        if (f['vcodec'] != 'none' and f['acodec'] == 'none' and f['resolution'] == resolution))
     except:
-        print("cannot find 1080p\n")
+        print("cannot find this resolution : ", resolution, " \n")
         best_video = next(f for f in formats
                         if (f['vcodec'] != 'none' and f['acodec'] == 'none'))
 
@@ -84,6 +87,11 @@ ydl_opts = {
 def main(argv):
     # print ('Number of arguments:', len(argv), 'arguments.')
     # print ('Argument List:', str(argv))
+    global resolution
+    if(argv[1]=="4k"):
+        resolution = "3840x2160"
+    elif(argv[1]=="2k"):
+        resolution = "2560x1440"
     with ytd(ydl_opts) as ydl:
         ydl.download(argv[0])
 
