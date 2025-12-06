@@ -14,9 +14,11 @@ class AppData():
         resol = ""
         match resolution:
             case "2k":
-                resol = "2560x1440"
+                resol = "1440"
+                # resol = "2560x1440"
             case "4k":
-                resol = "3840x2160"
+                resol = "2160"
+                # resol = "3840x2160"
             case _:
                 resol = os.environ.get("DEFAULT_RESOLUTION")
         self.resolution = resol
@@ -55,8 +57,16 @@ def format_selector(ctx):
     audio_ext = {'mp4': 'm4a', 'webm': 'webm'}[best_video['ext']]
 
     # vcodec='none' means there is no video
-    best_audio = next(f for f in formats if (
-        f['acodec'] != 'none' and f['vcodec'] == 'none' and f['ext'] == audio_ext))
+    # best_audio = next(f for f in formats if (
+    #     f['acodec'] != 'none' and f['vcodec'] == 'none' and f['ext'] == audio_ext))
+    best_audio = next(
+    f for f in formats
+    if (
+        f.get('acodec') != 'none'
+        and f.get('vcodec') == 'none'
+        and f.get('ext') == audio_ext
+        )
+    )
 
     # These are the minimum required fields for a merged format
     yield {
@@ -106,11 +116,12 @@ def download(url: str, resolution: str, download_directory: str) -> None:
     print(appdata.get_resolution())
     print(appdata.get_download_loc())
     ydl_opts = {
-        'format': format_selector,
+        'format': f"bv*[height<={appdata.get_resolution()}]+ba*[language*=en]",
+        # 'format': format_selector,
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
         'restrictfilenames': False,
-        #'subtitleslangs': "en",
+        'subtitleslangs': "en",
         'writeautomaticsub': True,
         'writesubtitles': True,
         #'listsubtitles': True,
